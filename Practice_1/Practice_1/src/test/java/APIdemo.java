@@ -54,7 +54,7 @@ public class APIdemo {
         ;
     }
 
-    @Test(priority = 4)
+    @Test(priority = 5)
     void deleteUser() {
         given()
         .when()
@@ -62,6 +62,25 @@ public class APIdemo {
         .then()
             .statusCode(204)
             .log().all()
+        ;
+    }
+
+    @Test(priority = 4)
+    void patchUser() {
+        JSONObject updatedInfo = new JSONObject();
+        updatedInfo.put("name", "morpheus");
+        updatedInfo.put("job", "zion resident");
+
+        given()
+            .contentType("application/json")
+            .body(updatedInfo.toString())
+        .when()
+            .patch("https://reqres.in/api/users/" + lastId)
+        .then()
+            .statusCode(200)
+            .body("name", equalTo("morpheus"))
+            .body("job", equalTo("zion resident"))
+        .log().all()
         ;
     }
 }
