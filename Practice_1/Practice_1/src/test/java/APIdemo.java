@@ -5,7 +5,9 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
 public class APIdemo {
-    @Test
+
+    int lastId;
+    @Test(priority = 1)
     void getUsers(){
          given()
          .when()
@@ -17,24 +19,25 @@ public class APIdemo {
          ;
     }
 
-    @Test
+    @Test(priority = 2)
     void createUser(){
         JSONObject user = new JSONObject();
         user.put("name", "George");
         user.put("job", "Quality Assurance");
 
-        given()
+        lastId = given()
             .contentType("application/json")
             .body(user)
         .when()
             .post("https://reqres.in/api/users")
-        .then()
-            .statusCode(201)
-            .log().all()
+                .jsonPath().getInt("id")
+//        .then()
+//            .statusCode(201)
+//            .log().all()
         ;
     }
 
-    @Test
+    @Test(priority = 3)
     void updateUser() {
         JSONObject user = new JSONObject();
         user.put("name", "George");
@@ -44,18 +47,18 @@ public class APIdemo {
             .contentType("application/json")
             .body(user)
         .when()
-            .put("https://reqres.in/api/users/2")
+            .put("https://reqres.in/api/users/"+lastId)
         .then()
             .statusCode(200)
             .log().all()
         ;
     }
 
-    @Test
+    @Test(priority = 4)
     void deleteUser() {
         given()
         .when()
-            .delete("https://reqres.in/api/users/2")
+            .delete("https://reqres.in/api/users/"+lastId)
         .then()
             .statusCode(204)
             .log().all()
